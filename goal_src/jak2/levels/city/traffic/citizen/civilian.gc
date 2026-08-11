@@ -103,6 +103,7 @@
 (defmethod cleanup-for-death ((this civilian))
   (cond
     ((zero? (-> this hit-points))
+     (grand-theft-zoomer-try-money-drop this 'civilian)
      (logclear! (-> this flags) (citizen-flag persistent))
      (send-event (ppointer->process (-> this parent)) 'child-killed)
      (let ((a1-1 (new 'stack-no-clear 'traffic-danger-info)))

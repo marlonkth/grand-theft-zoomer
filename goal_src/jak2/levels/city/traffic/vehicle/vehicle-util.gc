@@ -326,17 +326,21 @@
                   (set-scale! s3-1 0.9)
                   (set! (-> s3-1 flags) (font-flags shadow kerning large))
                   (print-game-text
-                    (lookup-text! *common-text* (text-id press-triangle-to-use) #f)
+                    (if (>= (gtz-money) *gtz-vehicle-entry-cost*)
+                        (lookup-text! *common-text* (text-id press-triangle-to-use) #f)
+                        (string-format "NEED $~D TO ENTER VEHICLE" *gtz-vehicle-entry-cost*)
+                        )
                     s3-1
                     #f
                     44
                     (bucket-id progress)
                     )
                   )
-                (when (cpad-pressed? 0 triangle)
+                (when (and (>= (gtz-money) *gtz-vehicle-entry-cost*) (cpad-pressed? 0 triangle))
                   (cond
                     (s4-1
                       (when (send-event *target* 'change-mode 'pilot this 0 #f)
+                        (remove-gtz-money *gtz-vehicle-entry-cost*)
                         (logior! (-> this flags) (rigid-body-object-flag player-driving))
                         (logclear! (-> this flags) (rigid-body-object-flag ai-driving))
                         (vehicle-method-87 this)

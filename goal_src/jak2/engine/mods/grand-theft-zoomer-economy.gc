@@ -1,0 +1,65 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(defmacro gtz-money ()
+  `(the int (-> *game-info* money))
+  )
+
+(defun set-gtz-money ((amount int))
+  "Set Jak's Grand Theft Zoomer money, clamped to zero."
+  (set! (-> *game-info* money) (the float (max 0 amount)))
+  (gtz-money)
+  )
+
+(defun add-gtz-money ((amount int))
+  "Add a non-negative amount to Jak's Grand Theft Zoomer money."
+  (give *game-info* 'money (the float (max 0 amount)) (the-as handle #f))
+  (gtz-money)
+  )
+
+(defun remove-gtz-money ((amount int))
+  "Remove a non-negative amount without allowing a negative balance."
+  (set-gtz-money (- (gtz-money) (max 0 amount)))
+  )
+
+(defun grand-theft-zoomer-try-money-drop ((victim enemy) (category symbol))
+  "Apply the configured drop chance and amount for an enemy category."
+  (let ((chance (case category
+                  (('civilian) *gtz-civilian-drop-chance*)
+                  (('crimson-guard) *gtz-crimson-guard-drop-chance*)
+                  (('metal-head) *gtz-metal-head-drop-chance*)
+                  (else 0.0)
+                  )
+                )
+        (amount (case category
+                  (('civilian) *gtz-civilian-drop-amount*)
+                  (('crimson-guard) *gtz-crimson-guard-drop-amount*)
+                  (('metal-head) *gtz-metal-head-drop-amount*)
+                  (else 0)
+                  )
+                )
+        )
+    (when (and (> amount 0) (rand-vu-percent? chance))
+      (birth-pickup-at-point
+        (-> victim root trans)
+        (pickup-type money)
+        (the float amount)
+        #t
+        *entity-pool*
+        (-> victim fact)
+        )
+      )
+    )
+  (none)
+  )
+
+(defun grand-theft-zoomer-try-enemy-money-drop ((victim enemy))
+  "Classify a regular enemy death as Crimson Guard or Metal Head."
+  (grand-theft-zoomer-try-money-drop
+    victim
+    (if (symbol-member? (-> victim type symbol) '(crimson-guard crimson-guard-level crimson-guard-hover))
+        'crimson-guard
+        'metal-head
+        )
+    )
+  )

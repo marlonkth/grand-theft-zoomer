@@ -7,6 +7,8 @@
 
 ;; DECOMP BEGINS
 
+(define-extern grand-theft-zoomer-try-enemy-money-drop (function enemy none))
+
 (defmethod copy-enemy-info! ((this enemy-info) (obj-to-copy enemy-info))
   "Copies the given [[enemy-info]] into the current [[enemy-info]]"
   (mem-copy! (&-> this type) (&-> obj-to-copy type) 384)
@@ -1753,6 +1755,7 @@
      (set! (-> this enemy-flags) (the-as enemy-flag (logior (enemy-flag death-start) (-> this enemy-flags))))
      (send-event (ppointer->process (-> this parent)) 'child-die)
      (drop-pickup (-> this fact) #t *entity-pool* (-> this fact) 0)
+     (grand-theft-zoomer-try-enemy-money-drop this)
      (let ((s5-1 (-> this on-death)))
        (if s5-1
            (script-eval s5-1 :vector (-> this root trans))

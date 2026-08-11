@@ -473,6 +473,9 @@
   "entity-debug.o" ;; added
   "mod-settings.o" ;; added ;;mod-base-change
   "mod-common-functions.o" ;; added
+  "grand-theft-zoomer-config.o" ;; added
+  "grand-theft-zoomer-economy.o" ;; added
+  "grand-theft-zoomer.o" ;; added
   "orb-placer.o"  ;; added
   "mod-custom-code.o" ;; added
   "path-editor-h.o" ;; added - path-editor-h

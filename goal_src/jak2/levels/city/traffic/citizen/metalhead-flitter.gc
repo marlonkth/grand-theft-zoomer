@@ -626,6 +626,7 @@
       (seconds 2)
       )
     (send-event self 'death-end)
+    (grand-theft-zoomer-try-money-drop self 'metal-head)
     (cleanup-for-death self)
     )
   )

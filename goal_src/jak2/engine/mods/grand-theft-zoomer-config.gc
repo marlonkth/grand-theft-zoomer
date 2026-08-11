@@ -1,0 +1,15 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+;; Economy tuning values for Grand Theft Zoomer.
+
+(defconstant *gtz-vehicle-entry-cost* 10)
+
+(defconstant *gtz-civilian-drop-chance* 0.25)
+(defconstant *gtz-civilian-drop-amount* 1)
+
+(defconstant *gtz-crimson-guard-drop-chance* 0.5)
+(defconstant *gtz-crimson-guard-drop-amount* 2)
+
+(defconstant *gtz-metal-head-drop-chance* 0.9)
+(defconstant *gtz-metal-head-drop-amount* 1)

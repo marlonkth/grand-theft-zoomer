@@ -1,0 +1,22 @@
+;;-*-Lisp-*-
+(in-package goal)
+
+(defun grand-theft-zoomer-update ()
+  "Draw the Grand Theft Zoomer money balance."
+  (when (and *target* (= *master-mode* 'game) (not (paused?)))
+    (with-dma-buffer-add-bucket ((buf (-> (current-frame) global-buf))
+                                 (bucket-id debug-no-zbuf1)
+                                 )
+      (draw-string-xy-scaled
+        (string-format "$~D" (gtz-money))
+        buf
+        510
+        18
+        (font-color green)
+        (font-flags right shadow kerning large)
+        0.7
+        )
+      )
+    )
+  (none)
+  )
