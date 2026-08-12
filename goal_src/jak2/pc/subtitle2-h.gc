@@ -198,11 +198,16 @@
 (deftype subtitle2-queue-element (structure)
   ((id    sound-id)
    (gui   gui-connection)
+   ;; Cache the scene while this GUI entry is queued. Looking it up scans the entire subtitle bank.
+   (scene subtitle2-scene)
+   ;; Language used to resolve scene. -1 means no subtitle bank was available.
+   (scene-language int32)
    )
   :pack-me
 
   (:methods
-    (clear-line (_type_) int))
+    (clear-line (_type_) int)
+    (resolve-scene! (_type_) int))
   )
 
 (deftype subtitle2-line-queue-element (structure)
@@ -363,6 +368,5 @@
   (set-subtitle-speaker-color<-speaker! keira-before-class-3 keira)
   (set-subtitle-speaker-color<-speaker! youngsamos-before-rescue youngsamos)
   )
-
 
 

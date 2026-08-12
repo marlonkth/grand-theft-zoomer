@@ -224,7 +224,21 @@
   "make this queue element invalid"
 
   (set! (-> obj gui) #f)
+  (set! (-> obj scene) #f)
+  (set! (-> obj scene-language) -1)
   (set! (-> obj id) (new 'static 'sound-id))
+  0)
+
+(defmethod resolve-scene! ((obj subtitle2-queue-element))
+  "Resolve and cache this queue element's subtitle scene for the current language."
+
+  (if *subtitle2-text*
+      (begin
+        (set! (-> obj scene) (get-scene-by-name *subtitle2-text* (-> obj gui name)))
+        (set! (-> obj scene-language) (the int (-> *subtitle2-text* lang))))
+      (begin
+        (set! (-> obj scene) #f)
+        (set! (-> obj scene-language) -1)))
   0)
 
 (defmethod clear-queue ((obj subtitle2))
@@ -268,7 +282,8 @@
 
   (let ((slot (get-empty-queue obj)))
       (set! (-> obj queue slot id) (-> gui id))
-      (set! (-> obj queue slot gui) gui))
+      (set! (-> obj queue slot gui) gui)
+      (resolve-scene! (-> obj queue slot)))
   gui)
 
 
@@ -428,7 +443,10 @@
         (when (and (zero? q) *debug-segment*)
             (format *stdcon0* "subtitle pos: ~3L~D~0L (~S)~%" (the int pos) (-> self queue i gui name)))
 
-        (let ((scene (get-scene-by-name *subtitle2-text* (-> self queue i gui name))))
+        ;; Refresh only when the subtitle bank's language changes; otherwise reuse the queued scene.
+        (when (!= (-> self queue i scene-language) (the int (-> *subtitle2-text* lang)))
+          (resolve-scene! (-> self queue i)))
+        (let ((scene (-> self queue i scene)))
         (when scene
           (dotimes (ii PC_SUBTITLE_QUEUE_MAX_LINES)
             (awhen (get-line-at-pos scene pos ii)
@@ -893,6 +911,5 @@
 
 ;; start the subtitle2 process when this file loads.
 (subtitle2-start)
-
 
 
